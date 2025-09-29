@@ -54,14 +54,9 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         [HttpPost]
         public IActionResult Update(Villa obj)
         {
-            if (obj.Name.Equals(obj.Description))
-            {
-                ModelState.AddModelError("Name", "The description cannot exactly match the name.");
-            }
-
             if (ModelState.IsValid)
             {
-                _context.Villas.Add(obj);
+                _context.Villas.Update(obj);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
