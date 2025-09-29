@@ -60,7 +60,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
             return View(obj);
         }
 
-        public IActionResult Update(int VillaNo)
+        public IActionResult Update(int villaNo)
         {
             VillaRoomVM villaRoomVM = new()
             {
@@ -69,7 +69,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
                     Text = u.Name,
                     Value = u.VillaId.ToString()
                 }).ToList(),
-                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == VillaNo)
+                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo)
             };
             if (villaRoomVM.VillaRoom is null)
             {
@@ -99,22 +99,30 @@ namespace WhiteLagoon.Web.Controllers.Mvc
 
         public IActionResult Delete(int villaNo)
         {
-            VillaRoom? obj = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo);
-            if (obj is null)
+            VillaRoomVM villaRoomVM = new()
+            {
+                VillaList = _context.Villas.Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.VillaId.ToString()
+                }).ToList(),
+                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo)
+            };
+            if (villaRoomVM.VillaRoom is null)
             {
                 return RedirectToAction("Error", "Home");
             }
-            return View(obj);
+            return View(villaRoomVM);
         }
 
         [HttpPost]
-        public IActionResult Delete(VillaRoom obj)
+        public IActionResult Delete(VillaRoomVM obj)
         {
-            VillaRoom? room = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == obj.VillaNo);
+            VillaRoom? room = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == obj.VillaRoom!.VillaNo);
 
             if (room is not null)
             {
-                _context.VillaRooms.Remove(obj);
+                _context.VillaRooms.Remove(obj.VillaRoom!);
                 _context.SaveChanges();
                 TempData["success"] = "The Villa room has been deleted successfully";
                 return RedirectToAction("Index");
