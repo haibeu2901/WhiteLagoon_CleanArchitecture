@@ -2,7 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using WhiteLagoon.Web.Models;
 
-namespace WhiteLagoon.Web.Controllers
+namespace WhiteLagoon.Web.Controllers.Mvc
 {
     public class HomeController : Controller
     {
