@@ -36,41 +36,65 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         }
 
         [HttpPost]
-        public IActionResult Create(VillaRoom obj)
+        public IActionResult Create(VillaRoomVM obj)
         {
+            bool isNumberUnique = _context.VillaRooms.Any(r => r.VillaNo == obj.VillaRoom!.VillaNo);
+            if (isNumberUnique)
+            {
+                TempData["error"] = "The Villa room number already exists";
+            }
+
             if (ModelState.IsValid)
             {
-                _context.VillaRooms.Add(obj);
+                _context.VillaRooms.Add(obj.VillaRoom!);
                 _context.SaveChanges();
                 TempData["success"] = "The Villa room has been created successfully";
                 return RedirectToAction("Index");
             }
             TempData["error"] = "Error while creating the Villa room";
-            return View();
+            obj.VillaList = _context.Villas.Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.VillaId.ToString()
+            }).ToList();
+            return View(obj);
         }
 
         public IActionResult Update(int VillaNo)
         {
-            VillaRoom? obj = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == VillaNo);
-            if (obj is null)
+            VillaRoomVM villaRoomVM = new()
+            {
+                VillaList = _context.Villas.Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.VillaId.ToString()
+                }).ToList(),
+                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == VillaNo)
+            };
+            if (villaRoomVM.VillaRoom is null)
             {
                 return RedirectToAction("Error", "Home");
             }
-            return View(obj);
+            return View(villaRoomVM);
         }
 
         [HttpPost]
-        public IActionResult Update(VillaRoom obj)
+        public IActionResult Update(VillaRoomVM obj)
         {
             if (ModelState.IsValid)
             {
-                _context.VillaRooms.Update(obj);
+                _context.VillaRooms.Update(obj.VillaRoom!);
                 _context.SaveChanges();
                 TempData["success"] = "The Villa room has been updated successfully";
                 return RedirectToAction("Index");
             }
             TempData["error"] = "Error while updating the Villa room";
-            return View();
+            obj.VillaList = _context.Villas.Select(u => new SelectListItem
+            {
+                Text = u.Name,
+                Value = u.VillaId.ToString()
+            }).ToList();
+            return View(obj);
         }
 
         public IActionResult Delete(int villaNo)
