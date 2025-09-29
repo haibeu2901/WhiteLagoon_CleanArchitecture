@@ -12,11 +12,13 @@ namespace WhiteLagoon.Infrastructure.Repository
     {
         private readonly ApplicationDbContext _context;
         public IVillaRepository villaRepo { get; private set; }
+        public IVillaRoomRepository villaRoomRepo { get; private set; }
 
         public UnitOfWork(ApplicationDbContext context)
         {
             _context = context;
             villaRepo = new VillaRepository(_context);
+            villaRoomRepo = new VillaRoomRepository(_context);
         }
 
         public void Save()

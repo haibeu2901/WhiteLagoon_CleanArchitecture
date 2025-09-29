@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WhiteLagoon.Application.Common.Interfaces;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 using WhiteLagoon.Web.ViewModels;
@@ -9,16 +10,16 @@ namespace WhiteLagoon.Web.Controllers.Mvc
 {
     public class VillaRoomController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public VillaRoomController(ApplicationDbContext context)
+        public VillaRoomController(IUnitOfWork unitOfWork)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var villaRooms = _context.VillaRooms.Include(r => r.Villa).ToList();
+            var villaRooms = _unitOfWork.villaRoomRepo.GetAll(includeProperties: "Villa");
             return View(villaRooms);
         }
 
@@ -26,7 +27,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         {
             VillaRoomVM villaRoomVM = new()
             {
-                VillaList = _context.Villas.Select(u => new SelectListItem
+                VillaList = _unitOfWork.villaRepo.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.VillaId.ToString()
@@ -38,7 +39,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         [HttpPost]
         public IActionResult Create(VillaRoomVM obj)
         {
-            bool isNumberUnique = _context.VillaRooms.Any(r => r.VillaNo == obj.VillaRoom!.VillaNo);
+            bool isNumberUnique = _unitOfWork.villaRoomRepo.Any(r => r.VillaNo == obj.VillaRoom!.VillaNo);
             if (isNumberUnique)
             {
                 TempData["error"] = "The Villa room number already exists";
@@ -46,13 +47,13 @@ namespace WhiteLagoon.Web.Controllers.Mvc
 
             if (ModelState.IsValid)
             {
-                _context.VillaRooms.Add(obj.VillaRoom!);
-                _context.SaveChanges();
+                _unitOfWork.villaRoomRepo.Add(obj.VillaRoom!);
+                _unitOfWork.Save();
                 TempData["success"] = "The Villa room has been created successfully";
                 return RedirectToAction("Index");
             }
             TempData["error"] = "Error while creating the Villa room";
-            obj.VillaList = _context.Villas.Select(u => new SelectListItem
+            obj.VillaList = _unitOfWork.villaRepo.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.VillaId.ToString()
@@ -64,12 +65,12 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         {
             VillaRoomVM villaRoomVM = new()
             {
-                VillaList = _context.Villas.Select(u => new SelectListItem
+                VillaList = _unitOfWork.villaRepo.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.VillaId.ToString()
                 }).ToList(),
-                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo)
+                VillaRoom = _unitOfWork.villaRoomRepo.Get(r => r.VillaNo == villaNo)
             };
             if (villaRoomVM.VillaRoom is null)
             {
@@ -83,13 +84,13 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         {
             if (ModelState.IsValid)
             {
-                _context.VillaRooms.Update(obj.VillaRoom!);
-                _context.SaveChanges();
+                _unitOfWork.villaRoomRepo.Update(obj.VillaRoom!);
+                _unitOfWork.Save();
                 TempData["success"] = "The Villa room has been updated successfully";
                 return RedirectToAction("Index");
             }
             TempData["error"] = "Error while updating the Villa room";
-            obj.VillaList = _context.Villas.Select(u => new SelectListItem
+            obj.VillaList = _unitOfWork.villaRepo.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.VillaId.ToString()
@@ -101,12 +102,12 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         {
             VillaRoomVM villaRoomVM = new()
             {
-                VillaList = _context.Villas.Select(u => new SelectListItem
+                VillaList = _unitOfWork.villaRepo.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.VillaId.ToString()
                 }).ToList(),
-                VillaRoom = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo)
+                VillaRoom = _unitOfWork.villaRoomRepo.Get(r => r.VillaNo == villaNo)
             };
             if (villaRoomVM.VillaRoom is null)
             {
@@ -118,12 +119,12 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         [HttpPost]
         public IActionResult Delete(VillaRoomVM obj)
         {
-            VillaRoom? room = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == obj.VillaRoom!.VillaNo);
+            VillaRoom? room = _unitOfWork.villaRoomRepo.Get(r => r.VillaNo == obj.VillaRoom!.VillaNo);
 
             if (room is not null)
             {
-                _context.VillaRooms.Remove(obj.VillaRoom!);
-                _context.SaveChanges();
+                _unitOfWork.villaRoomRepo.Delete(obj.VillaRoom!);
+                _unitOfWork.Save();
                 TempData["success"] = "The Villa room has been deleted successfully";
                 return RedirectToAction("Index");
             }
