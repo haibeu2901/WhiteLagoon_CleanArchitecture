@@ -10,7 +10,7 @@ namespace WhiteLagoon.Domain.Entities
 {
     public class Villa : BaseEntity
     {
-        public Guid Id { get; set; }
+        public int VillaId { get; set; }
 
         [MaxLength(50)]
         public required string Name { get; set; }

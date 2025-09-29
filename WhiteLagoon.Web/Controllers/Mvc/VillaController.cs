@@ -43,9 +43,9 @@ namespace WhiteLagoon.Web.Controllers.Mvc
             return View();
         }
 
-        public IActionResult Update(Guid villaId)
+        public IActionResult Update(int villaId)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(v => v.Id == villaId);
+            Villa? obj = _context.Villas.FirstOrDefault(v => v.VillaId == villaId);
             if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -67,9 +67,9 @@ namespace WhiteLagoon.Web.Controllers.Mvc
             return View();
         }
 
-        public IActionResult Delete(Guid villaId)
+        public IActionResult Delete(int villaId)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(v => v.Id == villaId);
+            Villa? obj = _context.Villas.FirstOrDefault(v => v.VillaId == villaId);
             if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -80,7 +80,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         [HttpPost]
         public IActionResult Delete(Villa obj)
         {
-            Villa? villa = _context.Villas.FirstOrDefault(v => v.Id == obj.Id);
+            Villa? villa = _context.Villas.FirstOrDefault(v => v.VillaId == obj.VillaId);
 
             if (villa is not null)
             {

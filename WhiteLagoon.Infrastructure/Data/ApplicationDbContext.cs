@@ -16,6 +16,8 @@ namespace WhiteLagoon.Infrastructure.Data
 
         public DbSet<Villa> Villas { get; set; }
 
+        public DbSet<VillaRoom> VillaRooms { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
@@ -24,7 +26,7 @@ namespace WhiteLagoon.Infrastructure.Data
             modelBuilder.Entity<Villa>().HasData(
                 new Villa
                 {
-                    Id = Guid.NewGuid(),
+                    VillaId = 1,
                     Name = "Royal Villa",
                     Description = "A luxurious villa with stunning sea views.",
                     Price = 500.0,
@@ -36,7 +38,7 @@ namespace WhiteLagoon.Infrastructure.Data
                 },
                 new Villa
                 {
-                    Id = Guid.NewGuid(),
+                    VillaId = 2,
                     Name = "Premium Pool Villa",
                     Description = "A premium villa with a private pool and garden.",
                     Price = 400.0,
@@ -48,7 +50,7 @@ namespace WhiteLagoon.Infrastructure.Data
                 },
                 new Villa
                 {
-                    Id = Guid.NewGuid(),
+                    VillaId = 3,
                     Name = "Normal Pool Villa",
                     Description = "A mornal villa with a no pool and a small garden.",
                     Price = 200.0,
@@ -57,6 +59,53 @@ namespace WhiteLagoon.Infrastructure.Data
                     ImageUrl = "https://example.com/images/normal-garden-villa.jpg",
                     CreatedAt = DateTime.Now,
                     IsDeleted = false
+                });
+
+            modelBuilder.Entity<VillaRoom>().HasData(
+                new VillaRoom
+                {
+                    VillaNo = 101,
+                    VillaId = 1
+                },
+                new VillaRoom
+                {
+                    VillaNo = 102,
+                    VillaId = 1
+                },
+                new VillaRoom
+                {
+                    VillaNo = 103,
+                    VillaId = 1
+                },
+                new VillaRoom
+                {
+                    VillaNo = 104,
+                    VillaId = 1
+                },
+                new VillaRoom
+                {
+                    VillaNo = 201,
+                    VillaId = 2
+                },
+                new VillaRoom
+                {
+                    VillaNo = 202,
+                    VillaId = 2
+                },
+                new VillaRoom
+                {
+                    VillaNo = 203,
+                    VillaId = 2
+                },
+                new VillaRoom
+                {
+                    VillaNo = 301,
+                    VillaId = 3
+                },
+                new VillaRoom
+                {
+                    VillaNo = 302,
+                    VillaId = 3
                 });
         }
     }
