@@ -25,27 +25,22 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         }
 
         [HttpPost]
-        public IActionResult Create(Villa obj)
+        public IActionResult Create(VillaRoom obj)
         {
-            if (obj.Name.Equals(obj.Description))
-            {
-                ModelState.AddModelError("Name", "The description cannot exactly match the name.");
-            }
-
             if (ModelState.IsValid)
             {
-                _context.Villas.Add(obj);
+                _context.VillaRooms.Add(obj);
                 _context.SaveChanges();
-                TempData["success"] = "The Villa has been created successfully";
+                TempData["success"] = "The Villa room has been created successfully";
                 return RedirectToAction("Index");
             }
-            TempData["error"] = "Error while creating the Villa";
+            TempData["error"] = "Error while creating the Villa room";
             return View();
         }
 
-        public IActionResult Update(int villaId)
+        public IActionResult Update(int VillaNo)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(v => v.VillaId == villaId);
+            VillaRoom? obj = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == VillaNo);
             if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -54,22 +49,22 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         }
 
         [HttpPost]
-        public IActionResult Update(Villa obj)
+        public IActionResult Update(VillaRoom obj)
         {
             if (ModelState.IsValid)
             {
-                _context.Villas.Update(obj);
+                _context.VillaRooms.Update(obj);
                 _context.SaveChanges();
-                TempData["success"] = "The Villa has been updated successfully";
+                TempData["success"] = "The Villa room has been updated successfully";
                 return RedirectToAction("Index");
             }
-            TempData["error"] = "Error while updating the Villa";
+            TempData["error"] = "Error while updating the Villa room";
             return View();
         }
 
-        public IActionResult Delete(int villaId)
+        public IActionResult Delete(int villaNo)
         {
-            Villa? obj = _context.Villas.FirstOrDefault(v => v.VillaId == villaId);
+            VillaRoom? obj = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == villaNo);
             if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
@@ -78,18 +73,18 @@ namespace WhiteLagoon.Web.Controllers.Mvc
         }
 
         [HttpPost]
-        public IActionResult Delete(Villa obj)
+        public IActionResult Delete(VillaRoom obj)
         {
-            Villa? villa = _context.Villas.FirstOrDefault(v => v.VillaId == obj.VillaId);
+            VillaRoom? room = _context.VillaRooms.FirstOrDefault(r => r.VillaNo == obj.VillaNo);
 
-            if (villa is not null)
+            if (room is not null)
             {
-                _context.Villas.Remove(obj);
+                _context.VillaRooms.Remove(obj);
                 _context.SaveChanges();
-                TempData["success"] = "The Villa has been deleted successfully";
+                TempData["success"] = "The Villa room has been deleted successfully";
                 return RedirectToAction("Index");
             }
-            TempData["error"] = "Error while deleting the Villa";
+            TempData["error"] = "Error while deleting the Villa room";
             return View();
         }
     }
