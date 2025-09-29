@@ -46,9 +46,26 @@ namespace WhiteLagoon.Web.Controllers.Mvc
             Villa? obj = _context.Villas.FirstOrDefault(v => v.Id == villaId);
             if (obj == null)
             {
-                return NotFound();
+                return RedirectToAction("Error", "Home");
             }
             return View(obj);
+        }
+
+        [HttpPost]
+        public IActionResult Update(Villa obj)
+        {
+            if (obj.Name.Equals(obj.Description))
+            {
+                ModelState.AddModelError("Name", "The description cannot exactly match the name.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _context.Villas.Add(obj);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
         }
     }
 }
