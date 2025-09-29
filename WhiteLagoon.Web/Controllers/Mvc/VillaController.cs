@@ -8,10 +8,12 @@ namespace WhiteLagoon.Web.Controllers.Mvc
     public class VillaController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public VillaController(IUnitOfWork unitOfWork)
+        public VillaController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public IActionResult Index()
@@ -35,6 +37,20 @@ namespace WhiteLagoon.Web.Controllers.Mvc
 
             if (ModelState.IsValid)
             {
+                if (obj.Image is not null)
+                {
+                    string fileName = Guid.NewGuid().ToString() + Path.GetExtension(obj.Image.FileName);
+                    string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\Villa Images", fileName);
+
+                    using var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create);
+                    obj.Image.CopyTo(fileStream);
+                    obj.ImageUrl = @"\images\Villa Images\" + fileName;
+                }
+                else
+                {
+                    obj.ImageUrl = @"~/images/placeholder.png";
+                }
+
                 _unitOfWork.villaRepo.Add(obj);
                 _unitOfWork.Save();
                 TempData["success"] = "The Villa has been created successfully";
@@ -60,7 +76,7 @@ namespace WhiteLagoon.Web.Controllers.Mvc
             if (ModelState.IsValid)
             {
                 _unitOfWork.villaRepo.Update(obj);
-               _unitOfWork.Save();
+                _unitOfWork.Save();
                 TempData["success"] = "The Villa has been updated successfully";
                 return RedirectToAction("Index");
             }
