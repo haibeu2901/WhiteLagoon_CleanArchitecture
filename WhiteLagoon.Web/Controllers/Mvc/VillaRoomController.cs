@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
+using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers.Mvc
 {
@@ -15,13 +18,21 @@ namespace WhiteLagoon.Web.Controllers.Mvc
 
         public IActionResult Index()
         {
-            var villaRooms = _context.VillaRooms.ToList();
+            var villaRooms = _context.VillaRooms.Include(r => r.Villa).ToList();
             return View(villaRooms);
         }
 
         public IActionResult Create()
         {
-            return View();
+            VillaRoomVM villaRoomVM = new()
+            {
+                VillaList = _context.Villas.Select(u => new SelectListItem
+                {
+                    Text = u.Name,
+                    Value = u.VillaId.ToString()
+                }).ToList()
+            };
+            return View(villaRoomVM);
         }
 
         [HttpPost]
